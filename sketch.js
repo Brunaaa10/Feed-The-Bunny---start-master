@@ -22,12 +22,27 @@ var sad;
 var blink;
 var button1;
 
+var air;
+var eatSound;
+var sadSound;
+var ropeCut;
+var sound1;
+var cutSound;
+
 function preload(){
   bgImg = loadImage("./images/background.png");
   eat = loadAnimation("./images/eat_0.png", "./images/eat_1.png", "./images/eat_2.png", "./images/eat_3.png", "./images/eat_4.png");
   sad = loadAnimation("./images/sad_1.png", "./images/sad_2.png", "./images/sad_3.png");
   blink = loadAnimation("./images/blink_1.png", "./images/blink_2.png", "./images/blink_3.png");
   fruitImg = loadImage("./images/melon.png");
+
+  //carreagando os sons
+  air = loadSound("./sounds/air.wav");
+  eatSound = loadSound("./sounds/eating_sound.mp3");
+  sadSound = loadSound("./sounds/sad.wav");
+  ropeCut = loadSound("./sounds/rope_cut.mp3");
+  sound1 = loadSound("./sounds/sound1.mp3");
+  cutSound = loadSound("./sounds/Cutting Through Foliage.mp3");
 
  blink.playing = true;
  eat.playing = true;
@@ -81,6 +96,7 @@ function setup() {
 
 function draw() {
   background(51);
+  sound1.play();
   image(bgImg, width/2, height/2, width, height);
   Engine.update(engine);
 
