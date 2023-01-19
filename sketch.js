@@ -21,13 +21,13 @@ var eat;
 var sad;
 var blink;
 var button1;
+var muteBtn;
 
-var air;
-var eatSound;
-var sadSound;
-var ropeCut;
-var sound1;
-var cutSound;
+var air, eatSound, sadSound,ropeCut,sound1, cutSound;
+
+var ballon;
+
+var isSad = false;
 
 function preload(){
   bgImg = loadImage("./images/background.png");
@@ -35,6 +35,7 @@ function preload(){
   sad = loadAnimation("./images/sad_1.png", "./images/sad_2.png", "./images/sad_3.png");
   blink = loadAnimation("./images/blink_1.png", "./images/blink_2.png", "./images/blink_3.png");
   fruitImg = loadImage("./images/melon.png");
+  muteBtn = loadImage("./images/mute.png");
 
   //carreagando os sons
   air = loadSound("./sounds/air.wav");
@@ -70,7 +71,22 @@ function setup() {
   button1.size(50,50);
   button1.mouseClicked(drop);
 
+  ballon = createImg("./images/balloon.png");
+  ballon.size(150,100);
+  ballon.position(20,320);
+  ballon.mouseClicked(blawer);
+
+  muteBtn = createImg("./images/mute.png");
+  muteBtn.size(50,50);
+  muteBtn.position(width - 60, 60);
+  muteBtn.mouseClicked(mute);
+
+ 
+
   rope = new Rope(8, {x: 150, y: 50});
+
+  sound1.play();
+  sound1.setVolume(0.2);
 
   Matter.Composite.add(rope.body, fruit);
 
@@ -80,7 +96,7 @@ function setup() {
   eat.frameDelay = 20;
   sad.frameDelay = 20;
 
-  bunny = createSprite(170, height - 80, 100, 100);
+  bunny = createSprite(100, height - 80, 100, 100);
   bunny.scale = 0.2;
   bunny.addAnimation("blink", blink);
 
@@ -96,7 +112,7 @@ function setup() {
 
 function draw() {
   background(51);
-  sound1.play();
+  
   image(bgImg, width/2, height/2, width, height);
   Engine.update(engine);
 
@@ -104,9 +120,29 @@ function draw() {
 
   fill("yellow");
 
-  image(fruitImg, fruit.position.x, fruit.position.y, 60,60);
+  if(fruit != null){
+    image(fruitImg, fruit.position.x, fruit.position.y, 60,60);
+  }
+
+  
   
   rope.show();
+
+  if(collided(fruit, bunny)){
+    World.remove(world,fruit);
+    fruit = null;
+    bunny.changeAnimation("eat");
+    eatSound.play();
+  }
+
+  if(fruit != null && fruit.position.y > bunny.y){
+    bunny.changeAnimation("sad");
+    
+    if(!isSad){
+    sadSound.play();
+    isSad = true;
+    }
+  }
 
   drawSprites();
 
@@ -118,6 +154,33 @@ function drop(){
 
   link = null;
 
+  ropeCut.play();
+
 }
 
+function blawer(){
+  Body.applyForce(fruit, {x:0, y:0}, {x:0.005, y:0});
 
+  air.play();
+}
+
+function collided(body, sprite){
+  if (body != null){
+    var d = dist(body.position.x, body.position.y, sprite.position.x, sprite.position.y);
+    if (d <= 55){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+}
+
+function mute(){
+  if(sound1.isPlaying()){
+    sound1.stop();
+  }
+  else {
+    sound1.play();
+  }
+}
